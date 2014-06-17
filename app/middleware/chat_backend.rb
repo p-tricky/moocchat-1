@@ -8,18 +8,11 @@ module ChatDemo
     CHANNEL        = "chat-demo"
 
     def initialize(app)
-      p "initialized"
       @app     = app
       @clients = []
     end
 
     def call(env)
-      #print "ready to call"
-      #print env
-      #@scheme = ENV['RACK_ENV'] == "production" ? "wss://" : "ws://"
-      #puts "=>"+ ENV['RACK_ENV']
-      #puts @scheme
-      #puts "<=this was scheme"
       if Faye::WebSocket.websocket?(env)
         ws = Faye::WebSocket.new(env, nil, {ping: KEEPALIVE_TIME })
         print "start new socket"
