@@ -1,4 +1,5 @@
 Moocchat::Application.routes.draw do
+  root :to => 'chat#chatpage'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
