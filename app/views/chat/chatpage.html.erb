@@ -18,10 +18,12 @@
     </div>
   </body>
 <script>
- var url ="<%= request.original_url[4..-1] %>";
- var addr = "ws" + url + "websocket/wsserver";
- alert(addr);
- var ws=new WebSocket(addr);
+var scheme = "<%= ENV['RACK_ENV'] == 'production' ? 'wss://' : 'ws://' %>";
+var uri      = scheme + window.document.location.host + "/chat";
+alert(uri);
+ //var url ="<%= request.original_url[4..-1] %>";
+ //var addr = "ws" + url + "websocket/wsserver";
+var ws=new WebSocket(uri);
 ws.onmessage = function(message) {
   var data = JSON.parse(message.data);
   $("#chat-text").append("<div class='panel panel-default'><div class='panel-heading'>" + data.handle + "</div><div class='panel-body'>" + data.text + "</div></div>");
