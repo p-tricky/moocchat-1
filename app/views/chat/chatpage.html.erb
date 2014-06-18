@@ -22,10 +22,13 @@ var scheme = "<%= ENV['RACK_ENV'] == 'production' ? 'wss://' : 'ws://' %>";
 var uri      = scheme + window.document.location.host + "/chat";
 alert(uri);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
  //var url ="<%= request.original_url[4..-1] %>";
  //var addr = "ws" + url + "websocket/wsserver";
 >>>>>>> okay, assets and embedded ruby are working for real this time, bout to deploy
+=======
+>>>>>>> successfully deployed to heroku, about to rebase with master
 var ws=new WebSocket(uri);
 ws.onmessage = function(message) {
   var data = JSON.parse(message.data);
