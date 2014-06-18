@@ -1,5 +1,5 @@
 Moocchat::Application.routes.draw do
-  get '/' => 'chat#chatpage'
+  get 'chat' => 'chat#chatpage'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
