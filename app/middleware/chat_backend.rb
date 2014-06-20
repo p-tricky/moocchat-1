@@ -16,7 +16,6 @@ module ChatDemo
     def call(env)
       if Faye::WebSocket.websocket?(env)
         ws = Faye::WebSocket.new(env, nil, {ping: KEEPALIVE_TIME })
-        p "hello"
         path = env["ORIGINAL_FULLPATH"]
         p 'path is' + path
 

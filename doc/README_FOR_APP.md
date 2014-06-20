@@ -21,11 +21,17 @@ database, populate its schema, and insert any initial data
 ## To deploy on Heroku for your own staging:
 
 0. First time: `heroku app:create pick-some-app-name`
+<<<<<<< HEAD
 0. First time: `heroku labs:enable websockets` to enable websockets for chat app
 0. Make sure your changes are committed locally
 0. `git push heroku master`
 0. Your app should now be live at `http://pick-some-app-name.herokuapp.com`
 0. If you get an application failed error message, try 'heroku run rake db:migrate' then refresh page
+=======
+0. Make sure your changes are committed locally
+0. `git push heroku master`
+0. Your app should now be live at `http://pick-some-app-name.herokuapp.com`
+>>>>>>> upstream/feature/AF-group
 
 ## Other useful tasks
 
