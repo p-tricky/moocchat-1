@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140619002801) do
+ActiveRecord::Schema.define(:version => 20140619200002) do
 
   create_table "activity_schemas", :force => true do |t|
     t.datetime "created_at",    :null => false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20140619002801) do
     t.integer  "num_questions"
     t.string   "tag"
     t.string   "name"
+    t.text     "questions"
     t.datetime "start_time"
     t.datetime "end_time"
     t.integer  "starts_every"
@@ -67,6 +68,7 @@ ActiveRecord::Schema.define(:version => 20140619002801) do
     t.text     "text"
     t.text     "answers"
     t.integer  "correct_answer_index"
+    t.text     "explanation"
   end
 
   create_table "tasks", :force => true do |t|
@@ -79,6 +81,7 @@ ActiveRecord::Schema.define(:version => 20140619002801) do
     t.boolean  "completed"
     t.string   "sequence_state"
     t.integer  "waiting_room_id"
+    t.text     "user_state"
   end
 
   add_index "tasks", ["activity_schema_id"], :name => "index_tasks_on_activity_schema_id"

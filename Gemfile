@@ -6,17 +6,16 @@ gem 'capybara'
 gem 'puma'
 gem 'faye-websocket'
 gem 'omniauth'
-
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+gem 'jquery-rails'
+gem 'date_validator'            # datetime validations for ActiveRecord
+gem 'foreman'
 
 group :development, :test do
   gem 'sqlite3'
   gem 'debugger'
   gem 'railroady' # requires 'brew install graphviz' on mac or 'sudo apt-get install graphviz' on linux
-  gem 'rspec-rails'
+  gem 'rspec-rails', '2.14.0'
   gem 'metric_fu'
-  gem 'selenium-webdriver' #for the javascript in static page(and any other javascript check)
 end
 
 group :test do
@@ -25,6 +24,9 @@ group :test do
   gem 'database_cleaner' # required by Cucumber
   gem 'autotest-rails'
   gem 'factory_girl_rails'
+  gem 'simplecov', :require => false
+  gem 'timecop'                 # for testing code that relies on time of day
+  gem 'selenium-webdriver' #for the javascript in static page(and any other javascript check)
 end
 
 group :production do
@@ -38,26 +40,6 @@ end
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
-
+  gem 'twitter-bootstrap-rails' #added the static bootstrap css
   gem 'uglifier', '>= 1.0.3'
 end
-
-gem 'jquery-rails'
-
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
-
-# To use debugger
-# gem 'debugger'

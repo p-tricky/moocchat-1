@@ -28,13 +28,8 @@ class Task < ActiveRecord::Base
 
   class ActivityNotOpenError < RuntimeError ; end
 
-<<<<<<< HEAD
-  serialize :sequence_state, Sequencer
-
   serialize :user_state, Hash
 
-=======
->>>>>>> upstream/feature/AF-group
   # Create a new task from a hash that includes a +condition_id+,
   # +activity_schema_id+, and +learner_name+.
   #
@@ -88,6 +83,14 @@ class Task < ActiveRecord::Base
     sequence_state.next_page
     save!
     self.reload.current_page
+  end
+
+  # Assign this task to a particular chat group.  As a side effect, this removes the task
+  # from its waiting room.
+  def assign_to_chat_group(group)
+    self.chat_group = group
+    self.waiting_room = nil
+    self.save!
   end
 
   # Returns the next question to be consumed for the task.
