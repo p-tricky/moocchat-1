@@ -150,6 +150,21 @@ Then /^the "([^"]*)" field(?: within (.*))? should contain "([^"]*)"$/ do |field
   end
 end
 
+
+Then /^the chat room's "chat-text" field should contain "([^"]*)"$/ do |value|
+    Timeout::timeout(10) do
+          sleep(0.05) until page.evaluate_script("window.socket && window.socket.readyState == 1;")
+    field = find_field("chat-text")
+    field_value = (field.tag_name == 'textarea') ? field.text : field.value
+    if field_value.respond_to? :should
+      field_value.should =~ /#{value}/
+    else
+      assert_match(/#{value}/, field_value)
+    end
+  end
+end
+
+
 Then /^the "([^"]*)" field(?: within (.*))? should not contain "([^"]*)"$/ do |field, parent, value|
   with_scope(parent) do
     field = find_field(field)
