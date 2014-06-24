@@ -59,6 +59,9 @@ end
 
 When /^(?:|I )fill in "([^"]*)" with "([^"]*)"$/ do |field, value|
   fill_in(field, :with => value)
+  Timeout::timeout(10) do
+    sleep(0.05) 
+  end
 end
 
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
