@@ -23,6 +23,7 @@ describe ActivitySchemasController do
   # This should return the minimal set of attributes required to create a valid
   # ActivitySchema. As you add validations to ActivitySchema, be sure to
   # adjust the attributes here as well.
+
   let(:valid_attributes) { {:name => "Steven", :start_time => 1.day.from_now.midnight, :end_time => 3.days.from_now, :starts_every => 30  } }
 
   # This should return the minimal set of values that should be in the session
@@ -84,14 +85,14 @@ describe ActivitySchemasController do
     describe "with invalid params" do
       it "assigns a newly created but unsaved activity_schema as @activity_schema" do
         # Trigger the behavior that occurs when invalid params are submitted
-        ActivitySchema.any_instance.stub(:save).and_return(false)
+        ActivitySchema.any_instance.stub(:save!).and_return(false)
         post :create, {:activity_schema => {  }}, valid_session
         assigns(:activity_schema).should be_a_new(ActivitySchema)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
-        ActivitySchema.any_instance.stub(:save).and_return(false)
+        ActivitySchema.any_instance.stub(:save!).and_return(false)
         post :create, {:activity_schema => {  }}, valid_session
         response.should render_template("new")
       end
@@ -106,7 +107,7 @@ describe ActivitySchemasController do
         # specifies that the ActivitySchema created on the previous line
         # receives the :update_attributes message with whatever params are
         # submitted in the request.
-        ActivitySchema.any_instance.should_receive(:update_attributes).with({ "these" => "params" })
+        ActivitySchema.any_instance.should_receive(:update_attributes!).with({ "these" => "params" })
         put :update, {:id => activity_schema.to_param, :activity_schema => { "these" => "params" }}, valid_session
       end
 
@@ -127,7 +128,7 @@ describe ActivitySchemasController do
       it "assigns the activity_schema as @activity_schema" do
         activity_schema = ActivitySchema.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
-        ActivitySchema.any_instance.stub(:save).and_return(false)
+        ActivitySchema.any_instance.stub(:save!).and_return(false)
         put :update, {:id => activity_schema.to_param, :activity_schema => {  }}, valid_session
         assigns(:activity_schema).should eq(activity_schema)
       end
@@ -135,7 +136,7 @@ describe ActivitySchemasController do
       it "re-renders the 'edit' template" do
         activity_schema = ActivitySchema.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
-        ActivitySchema.any_instance.stub(:save).and_return(false)
+        ActivitySchema.any_instance.stub(:save!).and_return(false)
         put :update, {:id => activity_schema.to_param, :activity_schema => {  }}, valid_session
         response.should render_template("edit")
       end

@@ -4,6 +4,10 @@ class Condition < ActiveRecord::Base
   has_many_inline :prologue_pages, :class_name => :template
   has_many_inline :body_pages, :class_name => :template
   has_many_inline :epilogue_pages, :class_name => :template
+  serialize :prologue_pages, Array
+  serialize :body_pages, Array
+  serialize :epilogue_pages, Array
+
 
   # The maximum allowable group size; experiments cannot specify chat groups
   # containing more than this number of learners.
@@ -17,7 +21,7 @@ class Condition < ActiveRecord::Base
   :greater_than_or_equal_to => 1,
   :less_than_or_equal_to => MAX_ALLOWABLE_GROUP_SIZE
   validates_numericality_of :minimum_group_size,
-  :greater_than_or_equal_to => 1,
+   :greater_than_or_equal_to => 1,
   :less_than_or_equal_to => ->(condition) { condition.preferred_group_size },
   :message => 'must be between 1 and preferred group size'
   

@@ -2,6 +2,8 @@ class ActivitySchema < ActiveRecord::Base
   include HasManyInline
   has_many :tasks
   belongs_to :cohort
+  attr_accessible :cohort_id
+
 
   # Minimum interval between experiment starts, in minutes
   MINIMUM_INTERVAL_BETWEEN_EXPERIMENTS = 5
