@@ -8,12 +8,16 @@ module ChatHelper
   # websocket to be created.  See +chatpage.js.erb+ for the chat code.
   # Only one chat per view is allowed.
   #
-  def chat()
+  def chat(opts = {})
     if defined? __chat
       raise "Can only have a single chat per page"
     else
       __chat = true
     end
-    render :partial => 'chat'
+    attribs = {'id' => '_chat-text_',
+      'class' => 'chat',
+      'data-chatgroup' => @chat_group, #hmm...?
+      'data-submit' => opts[:submit]}
+    content_tag 'div', attribs
   end
 end

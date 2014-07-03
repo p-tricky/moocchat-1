@@ -5,41 +5,63 @@ require 'erb'
 module ChatDemo
   class ChatBackend
     KEEPALIVE_TIME = 15 # in seconds
-    CHANNEL        = "chat-demo"
 
     def initialize(app)
       @app     = app
-      @clients = []
-      @groups = {}
+      @group   = {}
     end
 
     def call(env)
       if Faye::WebSocket.websocket?(env)
         ws = Faye::WebSocket.new(env, nil, {ping: KEEPALIVE_TIME })
-        #p "hello"
         path = env["ORIGINAL_FULLPATH"]
-        #p 'path is' + path
 
-        if @groups.has_key?(path)
-          @groups[path] << ws
-        else 
-          @groups[path] = [ws]
+        if @group.has_key?(path)
+          group_number = @group[path].length+1
+          @group[path].store(ws,group_number)
+        else
+          @group[path]={ws => 1}
+        end
+
+        @group.each do |path, ws|
+          p path
         end
 
         ws.on :open do |event|
-          #p [:open, ws.object_id]
-          @clients << ws
+
+          p [:open, ws.object_id]
+
+          @group[path].each { |student,group_position|
+            @group[path].each_value{ |pos|
+              note = "student #{pos} join the room "
+              text = {:text => note}
+              student.send(text.to_json)
+            }
+
+            note = "you joined as student #{group_position}"
+            student.send({:text => note}.to_json)
+          }
         end
 
         ws.on :message do |event|
-          #p [:message, event.data]
-          @groups[path].each {|client| client.send(event.data) }
+
+          sender = event.current_target
+          sender_pos = @group[path][sender]
+          received = JSON.parse(event.data)
+
+          data = received["text"]
+          @group[path].each {|client, pos| 
+            note = "student #{sender_pos} : #{data}"
+            text = {:text => note} 
+            client.send(text.to_json)
+          }
+
         end
 
         ws.on :close do |event|
-          #p [:close, ws.object_id, event.code, event.reason]
-          @clients.delete(ws)
-          @groups[path].delete(ws)
+          sender_pos = @group[path][ws]
+          note = "student #{sender_pos} quit the chat"
+          @group[path].delete(ws)
           ws = nil
         end
 

@@ -1,0 +1,44 @@
+var Chat = {
+  group: '',
+  ws: null,
+  inputForm: null,
+  initialize: function(chatGroup) {
+    this.group = chatGroup;
+    this.inputForm = $('#chat-input-form');
+    // create websocket
+    var scheme = "<%= ENV['RACK_ENV'] == 'production' ? 'wss://' : 'ws://' %>";
+    var uri = scheme + window.document.location.host + window.document.location.pathname;
+    this.ws = new WebSocket(uri);
+    alert("Created socket");
+    this.receiveMessages();
+    this.sendMessages();
+  },
+  receiveMessages: function() {
+    this.ws.onmessage = function(message) {
+      alert("message received");
+      var data = JSON.parse(message.data);
+      //if (data.group == this.group){
+        $("#chat-system").append("<div class='panel panel-default'><div class='panel-body'>" + data.text + "</div></div>")
+        $("#chat-text").stop().animate({
+            scrollTop: $('#chat-text')[0].scrollHeight
+          }, 800);
+      //}
+    }
+  },
+  sendMessages: function() {
+    this.inputForm.on("submit", function(event) {
+    //$("#chat-input-form").on("submit", function(event) {
+      event.preventDefault();
+      var text   = $("#input-text")[0].value;
+      this.ws.send(JSON.stringify({ text: text }));
+      $("#input-text")[0].value = "";
+    });
+  },
+  setup: function() {
+    var chats = $('#chat-box');
+    if (chats.length > 0) {
+      Chat.initialize(chats.data('chatgroup'));
+    }
+  },
+};
+$(Chat.setup);
