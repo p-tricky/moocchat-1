@@ -14,13 +14,30 @@ describe WaitingRoom do
       WaitingRoom.add @t
       expect { WaitingRoom.add @t }.to raise_error(WaitingRoom::TaskAlreadyWaitingError)
     end
+    describe 'sets timer' do
+      # for task starting every 5 mins, given current time, what should timer
+      # countdown be?
+      { 
+        "12:01:00 pm" => 4.minutes,
+        "12:01:45 pm" => 3.minutes + 15.seconds,
+        "12:04:58 pm" => 2.seconds,
+      }.each_pair do |now, time_to_go|
+        specify "to #{Time.at(time_to_go).strftime('%M:%S')} if it's #{now}" do
+          Timecop.freeze(now) do
+            a = create :activity_schema, :starts_every => 5
+            t = create :task, :activity_schema => a
+            WaitingRoom.add(t).should == time_to_go
+          end
+        end
+      end
+    end
   end
   describe 'expiration time' do
     [
       [6, 15, 18], [6, 0, 6], [6, 58, 0],
        
-    ].each do |test|
-      starts_every, minute_now, minute_to_expire = test
+    ].each do |test_case|
+      starts_every, minute_now, minute_to_expire = test_case
       specify "should be :#{'%02d' % minute_to_expire} if it's now :#{'%02d' % minute_now} and tasks are every #{starts_every} minutes" do
         a = create(:activity_schema, :starts_every => starts_every)
         Timecop.freeze(Time.now.change :min => minute_now, :sec => 0) do
@@ -28,6 +45,11 @@ describe WaitingRoom do
           (create(:waiting_room, :activity_schema => a)).expires_at.
             should == Time.now.change(:min => minute_to_expire, :sec => 0) + rollover.hours
         end
+      end
+    end
+    it 'should be aligned on 1-minute boundary' do
+      Timecop.freeze(Time.now.change :sec => 27) do
+        (create :waiting_room).expires_at.sec.should == 0
       end
     end
   end
@@ -85,6 +107,9 @@ describe WaitingRoom do
         end
         it "should empty the waiting room" do
           @w.tasks.length.should == 0
+        end
+        it "should give a nonblank chat_group to every task" do
+          @w.tasks.all { |task| task.chat_group.should_not be_blank }
         end
       end
     end

@@ -7,8 +7,8 @@ class WaitingRoom < ActiveRecord::Base
 
   # There is at most one waiting room for each
   # <ActivitySchema,Condition> pair.
-  belongs_to :condition
-  belongs_to :activity_schema
+  belongs_to :condition, :dependent => :destroy
+  belongs_to :activity_schema, :dependent => :destroy
   validates :condition_id, :uniqueness => {:scope => :activity_schema_id}
   validates_associated :condition
   validates_associated :activity_schema
@@ -44,11 +44,13 @@ class WaitingRoom < ActiveRecord::Base
   # Add a task to a waiting room.
   # If the waiting room for this condition and activity doesn't exist,
   # create it.
+  # Returns the number of seconds until the waiting room should be processed.
   def self.add task
     wr = WaitingRoom.
       find_or_create_by_activity_schema_id_and_condition_id!(
       task.activity_schema_id, task.condition_id)
     wr.add task
+    return wr.expires_at - Time.zone.now
   end
 
   # Wake up and check all waiting rooms.  For any waiting rooms whose +expired_at+ now
@@ -56,7 +58,6 @@ class WaitingRoom < ActiveRecord::Base
   def self.process_all!
     WaitingRoom.where(['expires_at <= ?', Time.zone.now]).each do |wr|
       wr.process
-      wr.destroy
     end
   end
 
@@ -83,7 +84,7 @@ class WaitingRoom < ActiveRecord::Base
       rejects = leftovers.empty? ? [ ] : create_groups_of(condition.minimum_group_size, leftovers)
       # if there are any singletons now, they're rejects
       rejects.each { |t| t.assign_to_chat_group CHAT_GROUP_NONE }
-      self.reload
+      self.destroy
     end
   end
 
@@ -113,7 +114,7 @@ class WaitingRoom < ActiveRecord::Base
   def compute_expiration_time
     repeat = activity_schema.starts_every
     minutes_to_add = repeat - (Time.now.min % repeat)
-    Time.now + minutes_to_add.minutes
+    (Time.zone.now + minutes_to_add.minutes).change(:sec => 0)
   end
 
 end
